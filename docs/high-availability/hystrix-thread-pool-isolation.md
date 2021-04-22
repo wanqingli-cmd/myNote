@@ -108,6 +108,66 @@ public String getProductInfos(String productIds) {
 }
 ```
 
+command的四种调用方式
+
+同步：new CommandHelloWorld("World").execute()，new ObservableCommandHelloWorld("World").toBlocking().toFuture().get()
+
+如果你认为observable command只会返回一条数据，那么可以调用上面的模式，去同步执行，返回一条数据
+
+异步：new CommandHelloWorld("World").queue()，new ObservableCommandHelloWorld("World").toBlocking().toFuture()
+
+对command调用queue()，仅仅将command放入线程池的一个等待队列，就立即返回，拿到一个Future对象，后面可以做一些其他的事情，然后过一段时间对future调用get()方法获取数据
+
+// observe()：hot，已经执行过了
+// toObservable(): cold，还没执行过
+
+Observable<String> fWorld = new CommandHelloWorld("World").observe();
+
+assertEquals("Hello World!", fWorld.toBlocking().single());
+
+fWorld.subscribe(new Observer<String>() {
+
+    @Override
+    public void onCompleted() {
+
+    }
+
+    @Override
+    public void onError(Throwable e) {
+        e.printStackTrace();
+    }
+
+    @Override
+    public void onNext(String v) {
+        System.out.println("onNext: " + v);
+    }
+
+});
+
+Observable<String> fWorld = new ObservableCommandHelloWorld("World").toObservable();
+
+assertEquals("Hello World!", fWorld.toBlocking().single());
+
+fWorld.subscribe(new Observer<String>() {
+
+    @Override
+    public void onCompleted() {
+
+    }
+
+    @Override
+    public void onError(Throwable e) {
+        e.printStackTrace();
+    }
+
+    @Override
+    public void onNext(String v) {
+        System.out.println("onNext: " + v);
+    }
+
+});
+
+
 我们回过头来，看看 Hystrix 线程池技术是如何实现资源隔离的。
 
 ![hystrix-thread-pool-isolation](/images/hystrix-thread-pool-isolation.png)
