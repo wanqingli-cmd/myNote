@@ -115,5 +115,14 @@ redis cluster 的高可用的原理，几乎跟哨兵是类似的。
 
 从节点执行主备切换，从节点切换为主节点。
 
+
+![图片](https://user-images.githubusercontent.com/65522342/125200127-1df05f80-e29c-11eb-87ca-c4ac53e044c2.png)
+当slave（从节点）发现自己的master（主节点）不可用时，变尝试进行Failover，以便称为新的master。由于挂掉的master可能会有多个slave，从而存在多个slave竞争成为master节点的过程， 其过程如下：
+
+slave发现自己的master不可用；
+slave将记录集群的currentEpoch（选举周期）加1，并广播FAILOVER_AUTH_REQUEST 信息进行选举；
+其他节点收到FAILOVER_AUTH_REQUEST信息后，只有其他的master可以进行响应，master收到消息后返回FAILOVER_AUTH_ACK信息，对于同一个Epoch，只能响应一次ack；
+slave收集maste返回的ack消息
+
 #### 与哨兵比较
 整个流程跟哨兵相比，非常类似，所以说，redis cluster 功能强大，直接集成了 replication 和 sentinel 的功能。
