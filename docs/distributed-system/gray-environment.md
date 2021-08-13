@@ -145,12 +145,15 @@ zuul配置:
 
 在zuul项目里添加依赖，https://github.com/jmnarloch/ribbon-discovery-filter-spring-cloud-starter
 
-<dependency>
+		<dependency>
 			<groupId>io.jmnarloch</groupId>
 			<artifactId>ribbon-discovery-filter-spring-cloud-starter</artifactId>
 			<version>2.1.0</version>
 		</dependency>
 这个就是做ribbon的Rule的。
+
+
+
 io.jmnarloch ribbon - discovery - filter - spring - cloud - starter 2.1.0这个就是做ribbon的Rule的。package com.example.zuul_route;
 
 import com.netflix.zuul.ZuulFilter;
@@ -178,7 +181,10 @@ import static org.springframework.cloud.netflix.zuul.filters.support.FilterConst
         @Override public Object run() {
             RequestContext ctx = RequestContext.getCurrentContext();
             HttpServletRequest request = ctx.getRequest();
-            if (request.getParameter("foo") != null) { // put the serviceId in RequestContext RibbonFilterContextHolder.getCurrentContext() .add("lancher", "1"); } else { RibbonFilterContextHolder.getCurrentContext() .add("lancher", "2"); }
+            if (request.getParameter("foo") != null) { // put the serviceId in 
+	    	RequestContext RibbonFilterContextHolder.getCurrentContext() .add("lancher", "1"); 
+	    } else { 
+	    	RibbonFilterContextHolder.getCurrentContext() .add("lancher", "2"); }
                 return null;
 
             }
